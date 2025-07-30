@@ -110,9 +110,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const refreshProfile = async () => {
     if (user) {
       await fetchProfile(user.id);
-      // Force a re-render by updating loading state
-      setLoading(true);
-      setTimeout(() => setLoading(false), 100);
     }
   };
 

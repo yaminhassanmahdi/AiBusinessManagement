@@ -14,7 +14,6 @@ import OrdersTab from '@/components/dashboard/OrdersTab';
 import ChatTab from '@/components/dashboard/ChatTab';
 import BusinessSettings from '@/components/dashboard/BusinessSettings';
 import AdminPanel from '@/components/dashboard/AdminPanel';
-import DebugInfo from '@/components/DebugInfo';
 import BusinessSetup from '@/components/BusinessSetup';
 
 const Dashboard = () => {
@@ -89,8 +88,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
 
-        {/* Debug Info - Remove this after fixing the issue */}
-        <DebugInfo />
+
         
         {profile.role === 'admin' ? (
           <AdminPanel />

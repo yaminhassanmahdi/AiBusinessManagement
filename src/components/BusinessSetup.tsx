@@ -46,9 +46,6 @@ const BusinessSetup = () => {
       // Refresh profile to get the business data
       await refreshProfile();
 
-      // Force a small delay to ensure state updates
-      await new Promise(resolve => setTimeout(resolve, 500));
-
       setIsSuccess(true);
       toast({
         title: "Business Created!",
