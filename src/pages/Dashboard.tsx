@@ -15,6 +15,7 @@ import ChatTab from '@/components/dashboard/ChatTab';
 import BusinessSettings from '@/components/dashboard/BusinessSettings';
 import AdminPanel from '@/components/dashboard/AdminPanel';
 import DebugInfo from '@/components/DebugInfo';
+import BusinessSetup from '@/components/BusinessSetup';
 
 const Dashboard = () => {
   const { user, profile, business, loading, signOut } = useAuth();
@@ -30,6 +31,11 @@ const Dashboard = () => {
 
   if (!user || !profile) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // If user is saas_user but no business exists, show business setup
+  if (isSaasUser && !business) {
+    return <BusinessSetup />;
   }
 
   const handleSignOut = async () => {
@@ -85,8 +91,7 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
-        {/* Debug Info - Remove this after fixing the issue */}
-        <DebugInfo />
+
         
         {isAdmin ? (
           <AdminPanel />
