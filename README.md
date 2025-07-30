@@ -1,8 +1,22 @@
-# Welcome to your Lovable project
+# SetupOnce - AI-Powered Business Management Platform
 
-## Project info
+A comprehensive SaaS business management platform with AI-powered features, product management, order tracking, and team collaboration.
 
-**URL**: https://lovable.dev/projects/90b2376b-0a5f-418d-9a61-48c99b81f3bd
+## Features
+
+- **Product Management**: Categories, attributes, variants, and inventory tracking
+- **Order Management**: Complete order lifecycle with customer management
+- **Team Collaboration**: Project and task management
+- **AI Chat Interface**: Natural language commands and queries
+- **Multi-tenant Architecture**: Secure business isolation
+- **Real-time Dashboard**: Business analytics and insights
+
+## Tech Stack
+
+- **Frontend**: React + TypeScript + Vite
+- **UI**: shadcn/ui + Tailwind CSS
+- **Backend**: Supabase (PostgreSQL + Auth + Real-time)
+- **Deployment**: Vercel-ready
 
 ## How can I edit this code?
 
@@ -60,14 +74,60 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+## Environment Variables
 
-Simply open [Lovable](https://lovable.dev/projects/90b2376b-0a5f-418d-9a61-48c99b81f3bd) and click on Share -> Publish.
+Create a `.env` file in the root directory with the following variables:
 
-## Can I connect a custom domain to my Lovable project?
+```bash
+# Copy .env.example to .env and update with your values
+cp .env.example .env
+```
 
-Yes, you can!
+Required variables:
+- `VITE_SUPABASE_URL`: Your Supabase project URL
+- `VITE_SUPABASE_PUBLISHABLE_KEY`: Your Supabase anon/public key
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Local Development
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+## Deployment
+
+### Vercel Deployment
+
+1. **Connect to GitHub**: Push this repository to GitHub
+2. **Deploy to Vercel**: 
+   - Go to [Vercel](https://vercel.com)
+   - Import your GitHub repository
+   - Add environment variables in Vercel dashboard:
+     - `VITE_SUPABASE_URL`
+     - `VITE_SUPABASE_PUBLISHABLE_KEY`
+3. **Deploy**: Vercel will automatically deploy your app
+
+### Environment Variables for Vercel
+
+In your Vercel project settings, add these environment variables:
+
+```
+VITE_SUPABASE_URL=https://xzrivvulxejkhunnewte.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6cml2dnVseGVqa2h1bm5ld3RlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4ODkyMDYsImV4cCI6MjA2OTQ2NTIwNn0.OXIQZ-UzS5zT23qPygj0olv779QnM0hN-tcfBk1PYvg
+```
+
+## Database Setup
+
+The project uses Supabase with the following features:
+- PostgreSQL database with Row Level Security (RLS)
+- Authentication and user management
+- Real-time subscriptions
+- File storage
+
+Database migrations are included in the `supabase/migrations/` directory.

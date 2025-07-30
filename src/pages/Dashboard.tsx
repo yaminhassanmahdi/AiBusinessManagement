@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Store, Users, Package, MessageSquare, BarChart3, DollarSign, LogOut, Settings, Bot } from 'lucide-react';
+import { Loader2, Store, Users, Package, MessageSquare, BarChart3, DollarSign, LogOut, Settings, Bot, Folder, Tag } from 'lucide-react';
 import DashboardOverview from '@/components/dashboard/DashboardOverview';
 import ProductsTab from '@/components/dashboard/ProductsTab';
+import CategoriesTab from '@/components/dashboard/CategoriesTab';
+import AttributesTab from '@/components/dashboard/AttributesTab';
 import OrdersTab from '@/components/dashboard/OrdersTab';
 import ChatTab from '@/components/dashboard/ChatTab';
 import BusinessSettings from '@/components/dashboard/BusinessSettings';
@@ -86,7 +88,7 @@ const Dashboard = () => {
           <AdminPanel />
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-7">
+            <TabsList className="grid w-full grid-cols-9">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
                 Overview
@@ -94,6 +96,14 @@ const Dashboard = () => {
               <TabsTrigger value="products" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
                 Products
+              </TabsTrigger>
+              <TabsTrigger value="categories" className="flex items-center gap-2">
+                <Folder className="h-4 w-4" />
+                Categories
+              </TabsTrigger>
+              <TabsTrigger value="attributes" className="flex items-center gap-2">
+                <Tag className="h-4 w-4" />
+                Attributes
               </TabsTrigger>
               <TabsTrigger value="orders" className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4" />
@@ -123,6 +133,14 @@ const Dashboard = () => {
 
             <TabsContent value="products">
               <ProductsTab />
+            </TabsContent>
+
+            <TabsContent value="categories">
+              <CategoriesTab />
+            </TabsContent>
+
+            <TabsContent value="attributes">
+              <AttributesTab />
             </TabsContent>
 
             <TabsContent value="orders">
