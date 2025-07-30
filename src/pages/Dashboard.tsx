@@ -33,17 +33,14 @@ const Dashboard = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // If user is saas_user but no business exists, show business setup
-  if (isSaasUser && !business) {
+  // Check if user needs to set up business
+  if (profile.role === 'saas_user' && !business) {
     return <BusinessSetup />;
   }
 
   const handleSignOut = async () => {
     await signOut();
   };
-
-  const isAdmin = profile.role === 'admin';
-  const isSaasUser = profile.role === 'saas_user';
 
   const getSubscriptionColor = (plan: string) => {
     switch (plan) {
@@ -93,7 +90,7 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-6">
 
         
-        {isAdmin ? (
+        {profile.role === 'admin' ? (
           <AdminPanel />
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
