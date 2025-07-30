@@ -5,6 +5,10 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://xzrivvulxejkhunnewte.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh6cml2dnVseGVqa2h1bm5ld3RlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4ODkyMDYsImV4cCI6MjA2OTQ2NTIwNn0.OXIQZ-UzS5zT23qPygj0olv779QnM0hN-tcfBk1PYvg";
 
+// Debug logging for environment variables
+console.log('Supabase URL:', SUPABASE_URL);
+console.log('Supabase Key exists:', !!SUPABASE_PUBLISHABLE_KEY);
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
