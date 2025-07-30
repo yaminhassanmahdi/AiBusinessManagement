@@ -112,19 +112,20 @@ const ProductsTab = () => {
     if (!business?.id) return;
 
     try {
+      // First, let's try a simple query to see if the table exists
       const { data, error } = await supabase
         .from('products')
-        .select(`
-          *,
-          category:product_categories(name, slug),
-          variants:product_variants(*),
-          tags:product_tag_relationships(product_tags(*))
-        `)
+        .select('*')
         .eq('business_id', business.id)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
+      console.log('Products data:', data);
       setProducts(data || []);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -186,7 +187,7 @@ const ProductsTab = () => {
         price: parseFloat(formData.price),
         cost: formData.cost ? parseFloat(formData.cost) : null,
         sku: formData.sku || null,
-        category_id: formData.category_id || null,
+        category_id: formData.category_id === 'no-category' ? null : formData.category_id || null,
         brand: formData.brand || null,
         weight: formData.weight ? parseFloat(formData.weight) : null,
         barcode: formData.barcode || null,
@@ -306,7 +307,7 @@ const ProductsTab = () => {
       price: '',
       cost: '',
       sku: '',
-      category_id: '',
+      category_id: 'no-category',
       brand: '',
       weight: '',
       barcode: '',
@@ -329,7 +330,7 @@ const ProductsTab = () => {
       price: product.price.toString(),
       cost: product.cost?.toString() || '',
       sku: product.sku || '',
-      category_id: product.category_id || '',
+      category_id: product.category_id || 'no-category',
       brand: product.brand || '',
       weight: product.weight?.toString() || '',
       barcode: product.barcode || '',
@@ -342,8 +343,8 @@ const ProductsTab = () => {
       low_stock_alert: product.low_stock_alert.toString(),
       image_url: product.image_url || ''
     });
-    setVariants(product.variants || []);
-    setSelectedTags(product.tags?.map((t: any) => t.product_tags?.name).filter(Boolean) || []);
+    setVariants([]);
+    setSelectedTags([]);
     setIsDialogOpen(true);
   };
 
@@ -449,7 +450,7 @@ const ProductsTab = () => {
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">No Category</SelectItem>
+                          <SelectItem value="no-category">No Category</SelectItem>
                           {categories.map((category) => (
                             <SelectItem key={category.id} value={category.id}>
                               {category.name}
@@ -650,26 +651,13 @@ const ProductsTab = () => {
                           {product.description}
                         </p>
                       )}
-                      {product.tags && product.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {product.tags.slice(0, 2).map((tag: any, index: number) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {tag.product_tags?.name}
-                            </Badge>
-                          ))}
-                          {product.tags.length > 2 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{product.tags.length - 2}
-                            </Badge>
-                          )}
-                        </div>
-                      )}
+
                     </div>
                   </TableCell>
                   <TableCell>{product.sku || '-'}</TableCell>
                   <TableCell>
-                    {product.category ? (
-                      <Badge variant="outline">{product.category.name}</Badge>
+                    {product.category_id ? (
+                      <Badge variant="outline">Category ID: {product.category_id}</Badge>
                     ) : (
                       '-'
                     )}
@@ -685,11 +673,7 @@ const ProductsTab = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {product.variants && product.variants.length > 0 ? (
-                      <Badge variant="secondary">{product.variants.length} variants</Badge>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
+                    <span className="text-muted-foreground">-</span>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-1">
