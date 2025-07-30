@@ -54,18 +54,17 @@ const CategoriesTab = () => {
     try {
       const { data, error } = await supabase
         .from('product_categories')
-        .select(`
-          *,
-          parent:product_categories!product_categories_parent_id_fkey(*)
-        `)
+        .select('*')
         .eq('business_id', business.id)
         .order('sort_order', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
       
-      // Organize categories into hierarchy
-      const organizedCategories = organizeCategories(data || []);
-      setCategories(organizedCategories);
+      console.log('Categories data:', data);
+      setCategories(data || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
       toast({
@@ -78,30 +77,7 @@ const CategoriesTab = () => {
     }
   };
 
-  const organizeCategories = (cats: Category[]): Category[] => {
-    const categoryMap = new Map<string, Category>();
-    const rootCategories: Category[] = [];
 
-    // Create a map of all categories
-    cats.forEach(cat => {
-      categoryMap.set(cat.id, { ...cat, children: [] });
-    });
-
-    // Organize into hierarchy
-    cats.forEach(cat => {
-      if (cat.parent_id) {
-        const parent = categoryMap.get(cat.parent_id);
-        if (parent) {
-          parent.children = parent.children || [];
-          parent.children.push(categoryMap.get(cat.id)!);
-        }
-      } else {
-        rootCategories.push(categoryMap.get(cat.id)!);
-      }
-    });
-
-    return rootCategories;
-  };
 
   const generateSlug = (name: string) => {
     return name
@@ -119,7 +95,7 @@ const CategoriesTab = () => {
         business_id: business.id,
         name: formData.name,
         description: formData.description || null,
-        parent_id: formData.parent_id || null,
+        parent_id: formData.parent_id === 'no-parent' ? null : formData.parent_id || null,
         slug: formData.slug || generateSlug(formData.name),
         image_url: formData.image_url || null,
         sort_order: parseInt(formData.sort_order),
@@ -165,7 +141,7 @@ const CategoriesTab = () => {
     setFormData({
       name: '',
       description: '',
-      parent_id: '',
+      parent_id: 'no-parent',
       slug: '',
       image_url: '',
       sort_order: '0'
@@ -177,7 +153,7 @@ const CategoriesTab = () => {
     setFormData({
       name: category.name,
       description: category.description || '',
-      parent_id: category.parent_id || '',
+      parent_id: category.parent_id || 'no-parent',
       slug: category.slug,
       image_url: category.image_url || '',
       sort_order: category.sort_order.toString()
@@ -218,15 +194,11 @@ const CategoriesTab = () => {
     setIsDialogOpen(true);
   };
 
-  const renderCategoryRow = (category: Category, level: number = 0) => (
+  const renderCategoryRow = (category: Category) => (
     <TableRow key={category.id}>
       <TableCell>
-        <div className="flex items-center gap-2" style={{ paddingLeft: `${level * 20}px` }}>
-          {category.children && category.children.length > 0 ? (
-            <FolderOpen className="h-4 w-4 text-blue-500" />
-          ) : (
-            <Folder className="h-4 w-4 text-gray-400" />
-          )}
+        <div className="flex items-center gap-2">
+          <Folder className="h-4 w-4 text-gray-400" />
           <div>
             <p className="font-medium">{category.name}</p>
             {category.description && (
@@ -239,8 +211,8 @@ const CategoriesTab = () => {
         <code className="text-xs bg-muted px-2 py-1 rounded">{category.slug}</code>
       </TableCell>
       <TableCell>
-        {category.parent ? (
-          <Badge variant="outline">{category.parent.name}</Badge>
+        {category.parent_id ? (
+          <Badge variant="outline">Parent ID: {category.parent_id}</Badge>
         ) : (
           <Badge variant="secondary">Root</Badge>
         )}
@@ -271,17 +243,6 @@ const CategoriesTab = () => {
       </TableCell>
     </TableRow>
   );
-
-  const renderCategoryTree = (categories: Category[], level: number = 0) => {
-    return categories.map(category => (
-      <React.Fragment key={category.id}>
-        {renderCategoryRow(category, level)}
-        {category.children && category.children.length > 0 && (
-          renderCategoryTree(category.children, level + 1)
-        )}
-      </React.Fragment>
-    ));
-  };
 
   if (loading) {
     return <div>Loading categories...</div>;
@@ -354,7 +315,7 @@ const CategoriesTab = () => {
                         <SelectValue placeholder="Select parent category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">No Parent (Root Category)</SelectItem>
+                        <SelectItem value="no-parent">No Parent (Root Category)</SelectItem>
                         {categories.map((category) => (
                           <SelectItem key={category.id} value={category.id}>
                             {category.name}
@@ -415,7 +376,7 @@ const CategoriesTab = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {renderCategoryTree(categories)}
+              {categories.map(category => renderCategoryRow(category))}
             </TableBody>
           </Table>
         )}
