@@ -38,11 +38,11 @@ const Navigation = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost">
-              Sign In
+            <Button variant="ghost" asChild>
+              <a href="/auth">Sign In</a>
             </Button>
-            <Button variant="hero">
-              Start Free Trial
+            <Button variant="hero" asChild>
+              <a href="/auth">Start Free Trial</a>
             </Button>
           </div>
 
