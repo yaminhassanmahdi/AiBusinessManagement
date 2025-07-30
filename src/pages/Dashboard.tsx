@@ -89,6 +89,8 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
 
+        {/* Debug Info - Remove this after fixing the issue */}
+        <DebugInfo />
         
         {profile.role === 'admin' ? (
           <AdminPanel />

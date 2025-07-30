@@ -46,6 +46,9 @@ const BusinessSetup = () => {
       // Refresh profile to get the business data
       await refreshProfile();
 
+      // Force a small delay to ensure state updates
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       setIsSuccess(true);
       toast({
         title: "Business Created!",
@@ -54,7 +57,7 @@ const BusinessSetup = () => {
 
       // Redirect to dashboard after a short delay
       setTimeout(() => {
-        window.location.reload();
+        window.location.href = '/dashboard';
       }, 2000);
 
     } catch (error: any) {

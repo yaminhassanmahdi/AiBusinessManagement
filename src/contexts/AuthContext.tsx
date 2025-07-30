@@ -77,11 +77,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Fetch business if user is saas_user
         if (profileData.role === 'saas_user') {
-          const { data: businessData } = await supabase
+          const { data: businessData, error: businessError } = await supabase
             .from('businesses')
             .select('*')
             .eq('owner_id', profileData.id)
             .single();
+          
+          if (businessError && businessError.code !== 'PGRST116') {
+            console.error('Error fetching business:', businessError);
+          }
           
           setBusiness(businessData);
         } else if (profileData.role === 'team_member') {
@@ -106,6 +110,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const refreshProfile = async () => {
     if (user) {
       await fetchProfile(user.id);
+      // Force a re-render by updating loading state
+      setLoading(true);
+      setTimeout(() => setLoading(false), 100);
     }
   };
 
