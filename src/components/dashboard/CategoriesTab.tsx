@@ -88,7 +88,19 @@ const CategoriesTab = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!business?.id) return;
+    console.log('Form submitted!');
+    console.log('Business ID:', business?.id);
+    console.log('Form data:', formData);
+    
+    if (!business?.id) {
+      console.error('No business ID found');
+      toast({
+        title: "Error",
+        description: "No business found",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       const categoryData = {
@@ -102,22 +114,30 @@ const CategoriesTab = () => {
         is_active: true
       };
 
+      console.log('Category data to save:', categoryData);
+
       let error;
       if (editingCategory) {
+        console.log('Updating existing category:', editingCategory.id);
         const { error: updateError } = await supabase
           .from('product_categories')
           .update(categoryData)
           .eq('id', editingCategory.id);
         error = updateError;
       } else {
+        console.log('Creating new category');
         const { error: insertError } = await supabase
           .from('product_categories')
           .insert([categoryData]);
         error = insertError;
       }
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
+      console.log('Category saved successfully!');
       toast({
         title: "Success",
         description: `Category ${editingCategory ? 'updated' : 'created'} successfully`,

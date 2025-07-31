@@ -177,7 +177,19 @@ const ProductsTab = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!business?.id) return;
+    console.log('Product form submitted!');
+    console.log('Business ID:', business?.id);
+    console.log('Form data:', formData);
+    
+    if (!business?.id) {
+      console.error('No business ID found');
+      toast({
+        title: "Error",
+        description: "No business found",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       const productData = {
@@ -202,10 +214,13 @@ const ProductsTab = () => {
         is_active: true
       };
 
+      console.log('Product data to save:', productData);
+
       let productId: string;
       let error;
 
       if (editingProduct) {
+        console.log('Updating existing product:', editingProduct.id);
         const { error: updateError } = await supabase
           .from('products')
           .update(productData)
@@ -213,6 +228,7 @@ const ProductsTab = () => {
         error = updateError;
         productId = editingProduct.id;
       } else {
+        console.log('Creating new product');
         const { data: insertData, error: insertError } = await supabase
           .from('products')
           .insert([productData])
@@ -222,7 +238,12 @@ const ProductsTab = () => {
         productId = insertData?.id;
       }
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Product saved successfully! Product ID:', productId);
 
       // Handle variants if any
       if (variants.length > 0 && productId) {
